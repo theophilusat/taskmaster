@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        .main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .wrapper {
+            display: flex;
+            width: 80%;
+            height: 80vh;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            flex-wrap: wrap; 
+        }
+
+        .form {
+            flex: 1;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+
+        .form form {
+            width: 100%;
+            max-width: 380px; 
+            margin: 0 auto; 
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .form h2 {
+            text-align: center;
+            color: green;
+            margin-bottom: 20px;
+        }
+
+        .form label {
+            display: block;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .form input {
+            width: 100%;
+            max-width: 100%; 
+            padding: 10px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .form button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            color: white;
+            background-color: green;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .form button:hover {
+            background-color: darkgreen;
+        }
+
+        .content {
+            flex: 1;
+            background-color: green;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+
+        @media (max-width: 768px) {
+            .wrapper {
+                flex-direction: column;
+                height: auto; 
+            }
+
+            .content {
+                display: none; 
+            }
+
+            .form {
+                border-right: none; 
+            }
+
+            .form form {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <div class="wrapper">
+            <!-- Form Section -->
+            <div class="form">
+                <form id="signupForm">
+                    <h2 style="text-align: center; color: green;">Login</h2>
+                    <div class="m1">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="m1">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="Enter your password" required>
+                    </div>
+                    <a href="signup.html"
+                        style="font-size: 15px; text-align: center; color: green;  font-size: 0.9rem; margin-top: -7px; text-decoration: none;">don't
+                        have an account? signup</a>
+                    <button type="submit" style="margin-top: 10px;">login</button>
+                </form>
+            </div>
+
+            <!-- Content Section -->
+            <div class="content">
+                <!-- <p>Welcome to our platform!</p> -->
+                 <img src="images/login.png" alt="" width="500px" height="500px">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Attach an event listener to handle form submission
+        document.querySelector("#signupForm").addEventListener("submit", async (event) => {
+            event.preventDefault(); // Prevent the form from refreshing the page
+
+            // Get form data
+            //   const username = document.querySelector("#username").value.trim();
+            const email = document.querySelector("#email").value.trim();
+            const password = document.querySelector("#password").value.trim();
+
+            // Validate form inputs
+            if (!email || !password) {
+                alert("All fields are required!");
+                return;
+            }
+
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters long.');
+                return;
+            }
+            // Prepare data for sending
+            const formData = { email, password };
+
+            try {
+                // Send a POST request to the server
+                const response = await fetch("http://localhost:5000/users/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formData),
+                });
+
+                // Handle server response
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(result.message || "Login successful!");
+                    // Save token to localStorage or a cookie
+                    localStorage.setItem("authToken", result.token);
+                    // Redirect to dashboard or homepage
+                    window.location.href = "/index.html";
+                }
+                else {
+                    const error = await response.json();
+                    alert(error.message || "Signup failed!");
+                }
+            } catch (error) {
+                console.error("Error during signup:", error);
+                alert("An error occurred. Please try again.");
+            }
+        });
+    </script>
+
+</body>
+
+</html>
